@@ -1,3 +1,5 @@
+using Database.Extensions;
+
 using Infrastructure.Extensions;
 
 using Serilog;
@@ -19,6 +21,8 @@ if (isUseSwagger)
 }
 
 builder.Services.AddControllers();
+
+builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddServices();
 
 Log.Logger.Information("Конфигурация была проинициализирована.");
@@ -34,6 +38,7 @@ if (isUseSwagger)
 }
 
 app.AddAppMiddlewares();
+app.AddMigrateDatabase();
 
 app.MapControllers();
 
