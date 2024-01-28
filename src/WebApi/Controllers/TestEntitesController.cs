@@ -1,5 +1,7 @@
 namespace WebApi.Controllers;
 
+using Database;
+
 using Domain.DTOs.Entites;
 using Domain.Models;
 
@@ -24,16 +26,19 @@ public class TestEntitiesController : ControllerBase
     /// <inheritdoc cref="ITestEntitesService"/>
     private readonly ITestEntitesService _testEntitesService;
 
+    private readonly AdminDbContext _context;
+
     /// <inheritdoc />
     /// <param name="logger">Логгер.</param>
     /// <param name="testEntitesService">Сервис тестовых сущностей.</param>
     public TestEntitiesController(ILogger<TestEntitiesController> logger,
-        ITestEntitesService testEntitesService)
+        ITestEntitesService testEntitesService, AdminDbContext context)
     {
         _logger = logger;
         _logger.LogDebug($"Инициализация: {nameof(TestEntitiesController)}.");
 
         _testEntitesService = testEntitesService;
+        _context = context;
 
         _logger.LogDebug($"{nameof(TestEntitiesController)}: инициализирован.");
     }
@@ -58,7 +63,7 @@ public class TestEntitiesController : ControllerBase
         _logger.LogDebug("Идентификатор тестовой сущности: {id}", id);
 
         var testEntity =
-            await _testEntitesService.GetEntityAsync(id, cancellationToken);
+            await _context.TestEntities.FindAsync(id, cancellationToken);
 
         var testEntityDto = testEntity.Adapt<TestEntityDto>();
 
@@ -78,7 +83,7 @@ public class TestEntitiesController : ControllerBase
     /// <response code="203">Когда тестовая сущность успешно добавлена.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<NoContentResult> AddTestEntityAsync(
+    public async Task<IActionResult> AddTestEntityAsync(
         TestEntityDto testEntityDto,
         CancellationToken cancellationToken = default)
     {
@@ -90,15 +95,18 @@ public class TestEntitiesController : ControllerBase
             testEntityDto);
 
         var testEntity = testEntityDto.Adapt<TestEntity>();
+        testEntity.Id = Guid.Empty;
 
-        await _testEntitesService.AddTestEntityAsync(testEntity,
+        await _context.TestEntities.AddAsync(testEntity,
             cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation(
             "Запрос на добавление тестовой сущности - успешно обработан.");
         _logger.LogDebug("Модель добавленной тестовой сущности: {testEntity}.",
             testEntity);
 
-        return NoContent();
+        return CreatedAtAction("GetTestEntity", new {testEntity.Id},
+            testEntityDto.Id);
     }
 }
