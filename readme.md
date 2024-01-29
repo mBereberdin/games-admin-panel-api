@@ -1,17 +1,28 @@
-# Шаблон dotnet7 backend приложений
+# Games admin panel
 
 <!-- Актуализировать после импорта -->
-[![Build](https://github.com/mBereberdin/net7-template/actions/workflows/Build.yml/badge.svg)](https://github.com/mBereberdin/net7-template/actions/workflows/Build.yml)
+[![Build](https://github.com/mBereberdin/games-admin-panel-api/actions/workflows/Build.yml/badge.svg)](https://github.com/mBereberdin/games-admin-panel-api/actions/workflows/Build.yml)
 
 ## Описание проекта
 
-Backend приложение.
+Backend приложение для администрирования игр.
 
-## После импорта
-После импорта шаблона необходимо:
-1. Обновить `serviceName` в Jenkinsfile;
-2. Обновить описание и ссылку бэйджа в readme;
-3. Выставить актуальный порт в appsettings и launchSettings;
+Основной функционал:
+
+- регистрация пользователей;
+- выдача пользователям токенов для взаимодействия с играми;
+- взаимодействие с правами игр (создание, удаление, назначение).
+
+## How to
+
+### Добавить миграцию
+
+1. Перейти в директорию: `src/Database/`;
+2. Выполнить команду:
+
+```powershell
+dotnet ef migrations add <MigrationName> -s ../WebApi 
+```
 
 ## Используемые технологии
 
@@ -19,3 +30,4 @@ Backend приложение.
 - swagger
 - serilog
 - mapster
+- ef core

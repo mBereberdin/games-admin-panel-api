@@ -4,7 +4,7 @@ pipeline {
     environment {
         projectName = 'WebApi'
         publishedPath = 'src/WebApi/bin/Release/net7.0/publish/.'
-        serviceName = 'app' // Вставить наименование дериктории для развертывания приложения.
+        serviceName = 'games-admin-panel-api' // Вставить наименование директории для развертывания приложения.
         servicesPath = '/services/'
     }
 
