@@ -61,7 +61,7 @@ public static class SwaggerExtensions
                             $"Для конфигурирования swagger сформирован адрес сервера: {serverUrl}.");
 
                         openApiDocument.Servers = new List<OpenApiServer>
-                            {new() {Url = serverUrl}};
+                            { new() { Url = serverUrl } };
                     });
                 Log.Logger.Information("Добавлен фильтр перед сериализацией.");
             }
