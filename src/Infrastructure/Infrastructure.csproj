@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Mapster" Version="7.4.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0"/>
         <PackageReference Include="Serilog" Version="3.1.1"/>

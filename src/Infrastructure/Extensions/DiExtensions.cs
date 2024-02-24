@@ -1,8 +1,12 @@
 namespace Infrastructure.Extensions;
 
+using System.Reflection;
+
 using Infrastructure.Middlewares;
 using Infrastructure.Services.Implementations;
 using Infrastructure.Services.Interfaces;
+
+using Mapster;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,8 +39,10 @@ public static class DiExtensions
     {
         Log.Logger.Information("Добавление сервисов.");
 
-        // Singleton в данном примере используется для проверки запросов. Конкретно - для получения сущности по id после ее добавления.
-        services.AddSingleton<ITestEntitesService, TestEntitesService>();
+        services.AddTransient<IUsersService, UsersService>();
+        services.AddTransient<IPasswordsService, PasswordsService>();
+
+        TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 
         Log.Logger.Information("Сервисы добавлены.");
     }

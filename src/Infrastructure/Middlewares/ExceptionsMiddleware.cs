@@ -3,6 +3,7 @@ namespace Infrastructure.Middlewares;
 using System.Text;
 
 using Infrastructure.Exceptions;
+using Infrastructure.Exceptions.CRUD;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -43,25 +44,54 @@ public class ExceptionsMiddleware
         {
             await _next(httpContext);
         }
+        catch (CreateException exception)
+        {
+            _logger.LogError("При выполнении запроса произошла ошибка создания сущности.");
+            _logger.LogDebug($"Ошибка создания сущности: {exception}, трассировка: {exception.StackTrace}.");
+
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
+        }
+        catch (UpdateException exception)
+        {
+            _logger.LogError("При выполнении запроса произошла ошибка обновления сущности.");
+            _logger.LogDebug($"Ошибка обновления сущности: {exception}, трассировка: {exception.StackTrace}.");
+
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
+        }
+        catch (NotFoundException exception)
+        {
+            _logger.LogError("При выполнении запроса произошла ошибка поиска сущности.");
+            _logger.LogDebug($"Ошибка поиска сущности: {exception}, трассировка: {exception.StackTrace}.");
+
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
+        }
+        catch (DeleteException exception)
+        {
+            _logger.LogError("При выполнении запроса произошла ошибка удаления сущности.");
+            _logger.LogDebug($"Ошибка удаления сущности: {exception}, трассировка: {exception.StackTrace}.");
+
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
+        }
+        catch (MappingException exception)
+        {
+            _logger.LogError("При выполнении запроса произошла ошибка преобразования.");
+            _logger.LogDebug($"Ошибка преобразования: {exception}, трассировка: {exception.StackTrace}.");
+
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
+        }
         catch (HeadersException exception)
         {
-            _logger.LogError(
-                "При выполнении запроса произошла ошибка заголовков.");
-            _logger.LogDebug(
-                $"Ошибка заголовков: {exception}, трассировка: {exception.StackTrace}.");
+            _logger.LogError("При выполнении запроса произошла ошибка заголовков.");
+            _logger.LogDebug($"Ошибка заголовков: {exception}, трассировка: {exception.StackTrace}.");
 
-            await WriteResponseAsync(httpContext,
-                StatusCodes.Status500InternalServerError, exception.Message);
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
         }
         catch (Exception exception)
         {
-            _logger.LogError(
-                "При выполнении запроса произошла непредвиденная ошибка.");
-            _logger.LogDebug(
-                $"Непредвиденная ошибка: {exception}, внутренняя ошибка: {exception.InnerException}.");
+            _logger.LogError("При выполнении запроса произошла непредвиденная ошибка.");
+            _logger.LogDebug($"Непредвиденная ошибка: {exception}, внутренняя ошибка: {exception.InnerException}.");
 
-            await WriteResponseAsync(httpContext,
-                StatusCodes.Status500InternalServerError, exception.Message);
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
         }
     }
 
@@ -72,8 +102,7 @@ public class ExceptionsMiddleware
     /// <param name="statusCode">Код статуса для ответа.</param>
     /// <param name="message">Сообщение для ответа.</param>
     /// <returns>Задачу.</returns>
-    private async Task WriteResponseAsync(HttpContext httpContext,
-        int statusCode, string message)
+    private async Task WriteResponseAsync(HttpContext httpContext, int statusCode, string message)
     {
         httpContext.Response.StatusCode = statusCode;
         httpContext.Response.ContentType = "text/plain";
