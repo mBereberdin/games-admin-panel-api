@@ -28,7 +28,7 @@ public class PasswordsController : ControllerBase
 
     /// <inheritdoc />
     /// <param name="logger">Логгер.</param>
-    /// <param name="passwordsService">Сервис тестовых сущностей.</param>
+    /// <param name="passwordsService">Сервис для работы с паролями.</param>
     public PasswordsController(ILogger logger, IPasswordsService passwordsService)
     {
         _logger = logger;
@@ -42,7 +42,7 @@ public class PasswordsController : ControllerBase
     /// <summary>
     /// Получить пароль.
     /// </summary>
-    /// <param name="id">Идентификатор парля.</param>
+    /// <param name="id">Идентификатор пароля.</param>
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>>
     /// <returns>Пароль в формате JSON.</returns>
     /// <response code="200">Когда пароль успешно получен.</response>
@@ -71,7 +71,7 @@ public class PasswordsController : ControllerBase
 
         _logger.Information(
             "Запрос на получение пароля - успешно обработан.");
-        _logger.Debug("Дто полученного пароля: {userDto}.", passwordDto);
+        _logger.Debug("Дто полученного пароля: {passwordDto}.", passwordDto);
 
         return Ok(passwordDto);
     }
@@ -81,7 +81,7 @@ public class PasswordsController : ControllerBase
     /// </summary>
     /// <param name="createPasswordDto">ДТО создания пароля.</param>
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>>
-    /// <response code="204">Когда пароль успешно добавлен.</response>
+    /// <response code="201">Когда пароль успешно добавлен.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PasswordDto))]
     public async Task<IActionResult> AddPasswordAsync([FromBody] CreatePasswordDto createPasswordDto,
@@ -93,10 +93,11 @@ public class PasswordsController : ControllerBase
 
         var passwordModel = createPasswordDto.Adapt<Password>();
         var createdPassword = await _passwordsService.CreatePasswordAsync(passwordModel, cancellationToken);
+        var createdPasswordDto = createdPassword.Adapt<PasswordDto>();
 
         _logger.Information("Запрос на добавление пароля - успешно обработан.");
-        _logger.Debug("Модель добавленного пароля: {createdPassword}.", createdPassword);
+        _logger.Debug("ДТО добавленного пароля: {createdPasswordDto}.", createdPasswordDto);
 
-        return CreatedAtAction("GetPassword", new { createdPassword.Id }, createdPassword);
+        return CreatedAtAction("GetPassword", new { createdPasswordDto.Id }, createdPasswordDto);
     }
 }

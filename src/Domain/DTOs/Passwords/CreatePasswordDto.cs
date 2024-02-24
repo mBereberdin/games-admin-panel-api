@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 /// <summary>
 /// ДТО создания пароля.
 /// </summary>
-public class CreatePasswordDto
+public record CreatePasswordDto
 {
     /// <inheritdoc cref="CreatePasswordDto"/>
     /// <param name="encryptedValue">Зашифрованное значение пароля.</param>
@@ -21,11 +21,11 @@ public class CreatePasswordDto
     /// </summary>
     [Required]
     [StringLength(32)]
-    public string EncryptedValue { get; set; }
+    public string EncryptedValue { get; init; }
 
     /// <summary>
     /// Идентификатор записи пользователя.
     /// </summary>
     [Required]
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
 }

@@ -45,7 +45,7 @@ public class UsersService : IUsersService, IModelsValidator
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Создание пользователя через сервис.");
-        _logger.Debug("Пользователь для создания: {updateUser}", createUser);
+        _logger.Debug("Пользователь для создания: {createUser}", createUser);
 
         if (!this.IsValid(createUser, out var validationResults))
         {
@@ -62,11 +62,11 @@ public class UsersService : IUsersService, IModelsValidator
         {
             await _context.SaveChangesAsync(cancellationToken);
         }
-        catch (DbUpdateException updateException)
+        catch (DbUpdateException dbUpdateException)
         {
-            _logger.Error("При добавлении пользователя в бд произошла ошибка: {updateException}", updateException);
+            _logger.Error("При добавлении пользователя в бд произошла ошибка: {dbUpdateException}", dbUpdateException);
 
-            throw new CreateException("При добавлении пользователя в бд произошла ошибка.", updateException);
+            throw new CreateException("При добавлении пользователя в бд произошла ошибка.", dbUpdateException);
         }
 
         _logger.Information("Создание пользователя через сервис - успешно.");
@@ -142,11 +142,11 @@ public class UsersService : IUsersService, IModelsValidator
         {
             await _context.SaveChangesAsync(cancellationToken);
         }
-        catch (DbUpdateException updateException)
+        catch (DbUpdateException dbUpdateException)
         {
-            _logger.Error("При обновлении пользователя в бд произошла ошибка: {updateException}", updateException);
+            _logger.Error("При обновлении пользователя в бд произошла ошибка: {dbUpdateException}", dbUpdateException);
 
-            throw new UpdateException("При обновлении пользователя в бд произошла ошибка.", updateException);
+            throw new UpdateException("При обновлении пользователя в бд произошла ошибка.", dbUpdateException);
         }
 
         _logger.Information("Обновление пользователя через сервис - успешно.");
@@ -175,11 +175,11 @@ public class UsersService : IUsersService, IModelsValidator
         {
             await _context.SaveChangesAsync(cancellationToken);
         }
-        catch (DbUpdateException updateException)
+        catch (DbUpdateException dbUpdateException)
         {
-            _logger.Error("При удалении пользователя в бд произошла ошибка: {updateException}", updateException);
+            _logger.Error("При удалении пользователя в бд произошла ошибка: {dbUpdateException}", dbUpdateException);
 
-            throw new DeleteException("При удалении пользователя в бд произошла ошибка.", updateException);
+            throw new DeleteException("При удалении пользователя в бд произошла ошибка.", dbUpdateException);
         }
 
         _logger.Information("Удаление пользователя через сервис - успешно.");

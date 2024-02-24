@@ -29,7 +29,7 @@ public class UsersController : ControllerBase
 
     /// <inheritdoc />
     /// <param name="logger">Логгер.</param>
-    /// <param name="usersService">Сервис тестовых сущностей.</param>
+    /// <param name="usersService">Сервис для работы с пользователями.</param>
     public UsersController(ILogger logger, IUsersService usersService)
     {
         _logger = logger;
@@ -48,7 +48,7 @@ public class UsersController : ControllerBase
     /// <response code="200">Когда пользователи успешно получены.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<UserDto>))]
-    public async Task<IActionResult> GetUsersAsync(CancellationToken cancellationToken = default)
+    public async Task<OkObjectResult> GetUsersAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Получен запрос на получение пользователей.");
@@ -57,7 +57,7 @@ public class UsersController : ControllerBase
         var foundUsersDtos = foundUsers.Adapt<IList<UserDto>>();
 
         _logger.Information(
-            "Запрос на получение пользователя - успешно обработан.");
+            "Запрос на получение пользователей - успешно обработан.");
         _logger.Debug("Кол-во полученных пользователей: {foundUsersCount}.", foundUsersDtos.Count);
         _logger.Debug("ДТО последнего полученного пользователя: {userDto}.", foundUsersDtos.LastOrDefault());
 
@@ -113,7 +113,7 @@ public class UsersController : ControllerBase
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Поступил запрос на добавление пользователя.");
-        _logger.Debug("ДТО пользователя: {updateUserDto}", createUserDto);
+        _logger.Debug("ДТО пользователя: {createUserDto}", createUserDto);
 
         var userModel = createUserDto.Adapt<User>();
         var user = await _usersService.CreateUserAsync(userModel, cancellationToken);
@@ -132,9 +132,11 @@ public class UsersController : ControllerBase
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>>
     /// <response code="201">Когда пользователь успешно добавлен.</response>
     /// <response code="204">Когда пользователь успешно обновлен.</response>
+    /// <response code="400">Когда данные не корректны.</response>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserDto))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateUserAsync([FromRoute] Guid id, [FromBody] UpdateUserDto updateUserDto,
         CancellationToken cancellationToken = default)
     {

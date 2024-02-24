@@ -5,13 +5,13 @@ using System.ComponentModel.DataAnnotations;
 /// <summary>
 /// ДТО пароля.
 /// </summary>
-public class PasswordDto
+public record PasswordDto
 {
     /// <inheritdoc cref="PasswordDto"/>
     /// <param name="encryptedValue">Зашифрованное значение пароля.</param>
     /// <param name="userId">Идентификатор записи пользователя.</param>
     /// <param name="id">Идентификатор пароля.</param>
-    public PasswordDto(string encryptedValue, Guid userId, Guid id)
+    public PasswordDto(Guid id, string encryptedValue, Guid userId)
     {
         EncryptedValue = encryptedValue;
         UserId = userId;
@@ -29,11 +29,11 @@ public class PasswordDto
     /// </summary>
     [Required]
     [StringLength(32)]
-    public string EncryptedValue { get; set; }
+    public string EncryptedValue { get; init; }
 
     /// <summary>
     /// Идентификатор записи пользователя.
     /// </summary>
     [Required]
-    public Guid UserId { get; set; }
+    public Guid UserId { get; init; }
 }

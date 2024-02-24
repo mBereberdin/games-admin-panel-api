@@ -25,7 +25,7 @@ public class PasswordsService : IPasswordsService, IModelsValidator
     /// </summary>
     private readonly AdminDbContext _context;
 
-    /// <inheritdoc cref="IUsersService"/>
+    /// <inheritdoc cref="IPasswordsService"/>
     /// <param name="context">Контекст базы данных панели администрирования.</param>
     /// <param name="logger">Логгер.</param>
     public PasswordsService(AdminDbContext context, ILogger logger)
