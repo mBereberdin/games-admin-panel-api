@@ -38,8 +38,32 @@ dotnet ef migrations add <MigrationName> -s ../WebApi
 
 ## Используемые технологии
 
+### Общая часть
+
 - .net core 7
-- swagger
-- serilog
-- mapster
-- ef core
+
+### Database
+
+- EntityFrameworkCore
+- EntityFrameworkCore.PostgreSQL
+- Serilog
+
+### Infrastructure
+
+- Serilog
+- Mapster
+
+### Tests
+
+- xUnit
+- FluentAssertions
+- EntityFrameworkCore.Sqlite
+- Moq
+- Moq.EntityFrameworkCore
+- coverlet.collector
+
+### WebApi
+
+- Mapster
+- Serilog
+- Swashbuckle.AspNetCore
