@@ -41,7 +41,7 @@ public class DatabaseFixture : IDisposable
     /// <summary>
     /// Создать контекст бд.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Контекст базы данных панели администрирования.</returns>
     protected AdminDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<AdminDbContext>().UseSqlite(_connection).Options;
@@ -76,6 +76,10 @@ public class DatabaseFixture : IDisposable
         return mockedContext.Object;
     }
 
+    /// <summary>
+    /// Заменить бд с фиктивными данными.
+    /// </summary>
+    /// <param name="dbContext">Контекст бд, который необходимо заменить и наполнить фиктивными данными.</param>
     public static void ReplaceDbWithFakeData(AdminDbContext dbContext)
     {
         dbContext.Database.EnsureDeleted();

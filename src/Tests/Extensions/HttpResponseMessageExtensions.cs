@@ -24,11 +24,11 @@ public static class HttpResponseMessageExtensions
         }
 
         var responseString = httpResponseMessage.Content.ReadAsStringAsync().Result;
-        var jOptions = new JsonSerializerOptions
+        var jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
-        var instance = JsonSerializer.Deserialize<TType>(responseString, jOptions) ??
+        var instance = JsonSerializer.Deserialize<TType>(responseString, jsonOptions) ??
                        throw new SerializationException("Не удалось десериализовать содержимое запроса.");
 
         return instance;

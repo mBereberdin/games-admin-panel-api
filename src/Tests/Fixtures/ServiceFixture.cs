@@ -57,12 +57,9 @@ public class ServiceFixture : DatabaseFixture, IDisposable
     protected TService CreateServiceForTest<TService>(Func<AdminDbContext, ILogger, TService> creation,
         bool needThrowDbUpdateException = false)
     {
-        if (needThrowDbUpdateException)
-        {
-            return creation(_mockedContextThrowException, _mockLogger);
-        }
+        var providedContext = needThrowDbUpdateException ? _mockedContextThrowException : _context;
 
-        return creation(_context, _mockLogger);
+        return creation(providedContext, _mockLogger);
     }
 
     /// <summary>

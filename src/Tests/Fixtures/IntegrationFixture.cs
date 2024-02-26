@@ -8,7 +8,7 @@ using Tests.Integrations;
 public class IntegrationFixture : IClassFixture<WebApiApplicationFactory<Program>>
 {
     /// <inheritdoc cref="IntegrationFixture"/>
-    /// <param name="factory">Фабрика проекта Example.</param>
+    /// <param name="factory">Фабрика проекта WebApi.</param>
     protected IntegrationFixture(WebApiApplicationFactory<Program> factory)
     {
         Client = factory.CreateClient();

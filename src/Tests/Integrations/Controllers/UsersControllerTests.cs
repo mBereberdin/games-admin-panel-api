@@ -18,7 +18,7 @@ using WebApi.Controllers;
 public class UsersControllerTests : IntegrationFixture
 {
     /// <inheritdoc cref="UsersControllerTests"/>
-    /// <param name="factory">Фабрика проекта Example.</param>
+    /// <param name="factory">Фабрика проекта WebApi.</param>
     public UsersControllerTests(WebApiApplicationFactory<Program> factory) : base(factory)
     {
     }
