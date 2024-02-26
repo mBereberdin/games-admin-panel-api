@@ -2,7 +2,7 @@
 
 <!-- Актуализировать после импорта -->
 
-[![Build](https://github.com/mBereberdin/games-admin-panel-api/actions/workflows/Build.yml/badge.svg)](https://github.com/mBereberdin/games-admin-panel-api/actions/workflows/Build.yml)
+[![Build](https://github.com/mBereberdin/games-admin-panel-api/actions/workflows/BuildAndTest.yml/badge.svg)](https://github.com/mBereberdin/games-admin-panel-api/actions/workflows/BuildAndTest.yml)
 
 ## Описание проекта
 

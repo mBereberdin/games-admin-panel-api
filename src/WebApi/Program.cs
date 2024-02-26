@@ -45,3 +45,12 @@ app.MapControllers();
 Log.Logger.Information("Приложение было проинициализировано.");
 
 app.Run();
+
+// Необходимо для интеграционных тестов.
+
+/// <summary>
+/// Программа.
+/// </summary>
+public partial class Program
+{
+}

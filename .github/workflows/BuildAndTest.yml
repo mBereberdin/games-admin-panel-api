@@ -1,0 +1,63 @@
+name: Build and test
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Установка .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Восстановление зависимостей
+        run: dotnet restore
+        working-directory: ./src
+
+      - name: Сборка проекта
+        run: dotnet build --configuration Release --no-restore
+        working-directory: ./src
+
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Установка .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Восстановление зависимостей
+      run: dotnet restore
+      working-directory: ./src/Tests
+
+    - name: Запуск тестов
+      run: dotnet test --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+      working-directory: ./src/Tests
+
+    - name: Отчет покрытия кода тестами
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: src/Tests/coverage/**/coverage.cobertura.xml
+        badge: false
+        fail_below_min: false
+        format: markdown
+        hide_branch_rate: false
+        hide_complexity: true
+        indicators: true
+        output: console
+        thresholds: '40 65'
