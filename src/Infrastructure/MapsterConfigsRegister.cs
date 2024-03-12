@@ -1,7 +1,9 @@
 namespace Infrastructure;
 
 using Domain.DTOs.Users;
+using Domain.Models.Games;
 using Domain.Models.Passwords;
+using Domain.Models.Rights;
 using Domain.Models.Users;
 
 using Mapster;
@@ -19,6 +21,8 @@ public class MapsterConfigsRegister : IRegister
     {
         AddUsersConfigs(config);
         AddPasswordsConfigs(config);
+        AddGamesConfigs(config);
+        AddRightsConfigs(config);
     }
 
 
@@ -52,5 +56,28 @@ public class MapsterConfigsRegister : IRegister
         });
 
         config.NewConfig<UpdateUserDto, User>().IgnoreNullValues(true);
+    }
+
+    /// <summary>
+    /// Добавить конфигурации игр.
+    /// </summary>
+    /// <param name="config">Конфигурация адаптера типов.</param>
+    private void AddGamesConfigs(TypeAdapterConfig config)
+    {
+        config.NewConfig<Game, Game>().IgnoreIf((source, destination) => source.Id.Equals(Guid.Empty),
+            destination => destination.Id);
+    }
+
+    /// <summary>
+    /// Добавить конфигурации прав.
+    /// </summary>
+    /// <param name="config">Конфигурация адаптера типов.</param>
+    private void AddRightsConfigs(TypeAdapterConfig config)
+    {
+        config.NewConfig<Right, Right>().IgnoreIf((source, destination) => source.Id.Equals(Guid.Empty),
+            destination => destination.Id);
+
+        config.NewConfig<Right, Right>().IgnoreIf((source, destination) => source.Game == null,
+            destination => destination.Game!);
     }
 }
