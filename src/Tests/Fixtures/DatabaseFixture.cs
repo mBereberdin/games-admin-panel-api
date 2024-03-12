@@ -64,12 +64,16 @@ public class DatabaseFixture : IDisposable
         mockedContext.SetupGet(context => context.Passwords).ReturnsDbSet(FakePasswords.GetManyCorrectExistsModels());
         // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
         mockedContext.Setup(context => context.Users.FindAsync(It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
+        mockedContext.SetupGet(context => context.Games).ReturnsDbSet(FakeGames.GetManyCorrectExistsModels());
             .Returns(() => new ValueTask<User>(FakeUsers.GetManyCorrectExistsModels().First())!);
         // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
         mockedContext
             .Setup(context => context.Passwords.FindAsync(It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
             .Returns(() => new ValueTask<Password>(FakePasswords.GetManyCorrectExistsModels().First())!);
 
+        mockedContext
+            .Setup(context => context.Games.FindAsync(It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
+            .Returns(() => new ValueTask<Game>(FakeGames.GetManyCorrectExistsModels().First())!);
         mockedContext.Setup(adminDbContext => adminDbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .Returns(() => throw new DbUpdateException());
 
@@ -87,10 +91,12 @@ public class DatabaseFixture : IDisposable
 
         dbContext.RemoveRange(dbContext.Users);
         dbContext.RemoveRange(dbContext.Passwords);
+        dbContext.RemoveRange(dbContext.Games);
         dbContext.SaveChanges();
 
         dbContext.Users.AddRange(FakeUsers.GetManyCorrectExistsModels());
         dbContext.Passwords.AddRange(FakePasswords.GetManyCorrectExistsModels());
+        dbContext.Games.AddRange(FakeGames.GetManyCorrectExistsModels());
         dbContext.SaveChanges();
     }
 
