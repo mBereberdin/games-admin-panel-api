@@ -2,6 +2,7 @@ namespace Tests.Fixtures;
 
 using Database;
 
+using Domain.Models.Games;
 using Domain.Models.Passwords;
 using Domain.Models.Users;
 
@@ -62,11 +63,14 @@ public class DatabaseFixture : IDisposable
         var mockedContext = new Mock<AdminDbContext>(options);
         mockedContext.SetupGet(context => context.Users).ReturnsDbSet(FakeUsers.GetManyCorrectExistsModels());
         mockedContext.SetupGet(context => context.Passwords).ReturnsDbSet(FakePasswords.GetManyCorrectExistsModels());
-        // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
-        mockedContext.Setup(context => context.Users.FindAsync(It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
         mockedContext.SetupGet(context => context.Games).ReturnsDbSet(FakeGames.GetManyCorrectExistsModels());
+        mockedContext.SetupGet(context => context.Rights).ReturnsDbSet(FakeRights.GetManyCorrectExistsModels());
+
+        // ReSharper disable EntityFramework.UnsupportedServerSideFunctionCall
+        mockedContext
+            .Setup(context => context.Users.FindAsync(It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
             .Returns(() => new ValueTask<User>(FakeUsers.GetManyCorrectExistsModels().First())!);
-        // ReSharper disable once EntityFramework.UnsupportedServerSideFunctionCall
+
         mockedContext
             .Setup(context => context.Passwords.FindAsync(It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
             .Returns(() => new ValueTask<Password>(FakePasswords.GetManyCorrectExistsModels().First())!);
@@ -74,6 +78,8 @@ public class DatabaseFixture : IDisposable
         mockedContext
             .Setup(context => context.Games.FindAsync(It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
             .Returns(() => new ValueTask<Game>(FakeGames.GetManyCorrectExistsModels().First())!);
+        // ReSharper restore EntityFramework.UnsupportedServerSideFunctionCall
+
         mockedContext.Setup(adminDbContext => adminDbContext.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .Returns(() => throw new DbUpdateException());
 
@@ -92,11 +98,13 @@ public class DatabaseFixture : IDisposable
         dbContext.RemoveRange(dbContext.Users);
         dbContext.RemoveRange(dbContext.Passwords);
         dbContext.RemoveRange(dbContext.Games);
+        dbContext.RemoveRange(dbContext.Rights);
         dbContext.SaveChanges();
 
         dbContext.Users.AddRange(FakeUsers.GetManyCorrectExistsModels());
         dbContext.Passwords.AddRange(FakePasswords.GetManyCorrectExistsModels());
         dbContext.Games.AddRange(FakeGames.GetManyCorrectExistsModels());
+        dbContext.Rights.AddRange(FakeRights.GetManyCorrectExistsModels());
         dbContext.SaveChanges();
     }
 
