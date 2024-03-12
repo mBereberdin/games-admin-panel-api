@@ -32,8 +32,4 @@
         <ProjectReference Include="..\WebApi\WebApi.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Unit\"/>
-    </ItemGroup>
-
 </Project>
