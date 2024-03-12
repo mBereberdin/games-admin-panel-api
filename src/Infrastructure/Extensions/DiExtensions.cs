@@ -2,6 +2,7 @@ namespace Infrastructure.Extensions;
 
 using System.Reflection;
 
+using Infrastructure.Comparers;
 using Infrastructure.Middlewares;
 using Infrastructure.Services.Implementations;
 using Infrastructure.Services.Interfaces;
@@ -41,6 +42,9 @@ public static class DiExtensions
 
         services.AddTransient<IUsersService, UsersService>();
         services.AddTransient<IPasswordsService, PasswordsService>();
+        services.AddTransient<IGamesService, GamesService>();
+        services.AddTransient<IRightsService, RightsService>();
+        services.AddTransient<RightsSortComparer>();
 
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 
