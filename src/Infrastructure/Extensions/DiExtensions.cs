@@ -45,6 +45,7 @@ public static class DiExtensions
         services.AddTransient<IGamesService, GamesService>();
         services.AddTransient<IRightsService, RightsService>();
         services.AddTransient<RightsSortComparer>();
+        services.AddTransient<ExternalGamesComparer>();
 
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 

@@ -8,17 +8,17 @@ using Domain.Models.Rights;
 public class SortedRights
 {
     /// <summary>
-    /// Права, которое необходимо удалить.
+    /// Права, которые необходимо удалить.
     /// </summary>
     public IList<Right>? RightsToDelete { get; set; }
 
     /// <summary>
-    /// Права, которое необходимо обновить.
+    /// Права, которые необходимо обновить.
     /// </summary>
     public IList<Right>? RightsToUpdate { get; set; }
 
     /// <summary>
-    /// Права, которое необходимо добавить.
+    /// Права, которые необходимо добавить.
     /// </summary>
     public IList<Right>? RightsToCreate { get; set; }
 }

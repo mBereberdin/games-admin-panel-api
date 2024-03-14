@@ -87,7 +87,7 @@ public class RightsServiceTests : ServiceFixture
 
         //Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await rightsService.GetAsync(MockCancellationToken, null!));
+            await rightsService.GetAsync(MockCancellationToken, Array.Empty<string>()));
     }
 
     [Fact]
@@ -278,7 +278,7 @@ public class RightsServiceTests : ServiceFixture
     #region Delete
 
     [Fact]
-    public async Task TryDeleteRangeAsync_WithExistsRights_Success()
+    public async Task TryDeleteRangeAsync_WithExistsRights_ReturnTrue()
     {
         //Arrange
         var comparer = new RightsSortComparer();
@@ -296,7 +296,7 @@ public class RightsServiceTests : ServiceFixture
     }
 
     [Fact]
-    public async Task TryDeleteRangeAsync_WithNotExistsRights_Success()
+    public async Task TryDeleteRangeAsync_WithNotExistsRights_ReturnFalse()
     {
         //Arrange
         var comparer = new RightsSortComparer();

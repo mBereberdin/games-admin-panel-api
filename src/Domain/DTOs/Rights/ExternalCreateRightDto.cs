@@ -8,8 +8,8 @@ using System.ComponentModel.DataAnnotations;
 public record ExternalCreateRightDto
 {
     /// <inheritdoc cref="ExternalCreateRightDto"/>
-    /// <param name="name">Наименование</param>
-    /// <param name="description">Описание</param>
+    /// <param name="name">Наименование.</param>
+    /// <param name="description">Описание.</param>
     public ExternalCreateRightDto(string name, string description)
     {
         Name = name;

@@ -48,6 +48,6 @@ public class RightsSortComparer : IEqualityComparer<Right>
     /// <returns>Хэш-код права.</returns>
     public int GetHashCode(Right right)
     {
-        return HashCode.Combine(right.Name.GetHashCode(), right.Description, right.GameId);
+        return HashCode.Combine(right.Name, right.Description, right.GameId);
     }
 }

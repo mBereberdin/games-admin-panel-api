@@ -40,9 +40,9 @@ public interface IGamesService
     /// <param name="id">Идентификатор игры для обновления.</param>
     /// <param name="updatedGame">Игра для обновления.</param>
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
-    /// <returns>Задачу.</returns>
+    /// <returns>Задачу, результатом которой является обновленная модель игры.</returns>
     /// <exception cref="ArgumentException">Когда игра заполнена некорректно.</exception>
     /// <exception cref="NotFoundException">Когда не удалось получить игру для обновления.</exception>
     /// <exception cref="UpdateException">Когда при обновлении игры возникла ошибка.</exception>
-    public Task UpdateAsync(Guid id, Game updatedGame, CancellationToken cancellationToken);
+    public Task<Game> UpdateAsync(Guid id, Game updatedGame, CancellationToken cancellationToken);
 }

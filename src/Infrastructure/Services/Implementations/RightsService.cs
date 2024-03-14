@@ -26,9 +26,7 @@ public class RightsService : IRightsService, IModelsValidator
     /// </summary>
     private readonly ILogger _logger;
 
-    /// <summary>
-    /// Контекст базы данных панели администрирования.
-    /// </summary>
+    /// <inheritdoc cref="AdminDbContext"/>
     private readonly AdminDbContext _context;
 
     /// <inheritdoc cref="RightsSortComparer"/>
@@ -92,7 +90,7 @@ public class RightsService : IRightsService, IModelsValidator
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Получение права через сервис.");
-        _logger.Debug("Наименование права: {rightsNames}.", rightsNames);
+        _logger.Debug("Наименование права: {rightsNames}.", string.Join(",", rightsNames));
 
         if (rightsNames is null || rightsNames.Length is 0)
         {
@@ -109,13 +107,14 @@ public class RightsService : IRightsService, IModelsValidator
         if (!foundRight.Any())
         {
             _logger.Error("Не удалось найти право.");
-            _logger.Debug("Наименование права, для которого не удалось найти модель: {rightsNames}.", rightsNames);
+            _logger.Debug("Наименование права, для которого не удалось найти модель: {rightsNames}.",
+                string.Join(",", rightsNames));
 
             return null;
         }
 
         _logger.Information("Получение права через сервис - успешно.");
-        _logger.Debug("Полученное право: {foundRight}.", foundRight);
+        _logger.Debug("Полученное право: {foundRight}.", string.Join(",", foundRight));
 
         return foundRight;
     }
@@ -260,7 +259,7 @@ public class RightsService : IRightsService, IModelsValidator
         if (rightModels is null)
         {
             _logger.Error("Не удалось найти права для обновления.");
-            _logger.Debug("Наименования для поска прав: {name}.", string.Join(',', rightNames));
+            _logger.Debug("Наименования для поиска прав: {name}.", string.Join(',', rightNames));
 
             throw new NotFoundException("Не удалось найти права для обновления.");
         }
@@ -333,11 +332,12 @@ public class RightsService : IRightsService, IModelsValidator
             if (rightWithSameName is null)
             {
                 sortedRights.RightsToCreate.Add(rightToSort);
+
                 continue;
             }
 
-            var isRightNeedToUpDate = !_rightsSortComparer.Equals(rightToSort, rightWithSameName);
-            if (isRightNeedToUpDate)
+            var isRightNeedToUpdate = !_rightsSortComparer.Equals(rightToSort, rightWithSameName);
+            if (isRightNeedToUpdate)
             {
                 sortedRights.RightsToUpdate.Add(rightToSort);
             }

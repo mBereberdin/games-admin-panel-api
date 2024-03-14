@@ -12,7 +12,6 @@ public static class FakeGames
     /// </summary>
     private static string _firstExistsGameName = string.Empty;
 
-
     /// <summary>
     /// Первый идентификатор существующей игры.
     /// </summary>
@@ -85,15 +84,14 @@ public static class FakeGames
     #region Models
 
     /// <summary>
-    /// Получить несколько некорректных фиктивных пользователей, для теста обновления.
+    /// Получить несколько некорректных фиктивных игр, для теста обновления.
     /// </summary>
     public static IEnumerable<object[]> GetManyIncorrectModelsForUpdateTest()
     {
         var incorrectNewGameModels = GetManyIncorrectNewModels().ToList();
-        var existsGameId = GetManyCorrectExistsModels().First().Id;
-        foreach (var incorrectNewUserModel in incorrectNewGameModels)
+        foreach (var incorrectNewGameModel in incorrectNewGameModels)
         {
-            incorrectNewUserModel.Id = existsGameId;
+            incorrectNewGameModel.Id = GetFirstExistsGameId;
         }
 
         incorrectNewGameModels.AddRange(new[]
@@ -161,14 +159,14 @@ public static class FakeGames
             {
                 Id = Guid.Empty,
                 Name = "incorrectModel4",
-                Description = "" // Не корректно, потому что Description - отсутствует.
+                Description = "" // Не корректно, потому что Description - меньше минимального значения.
             },
             new()
             {
                 Id = Guid.Empty,
                 Name = "incorrectModel4",
                 Description =
-                    "123456781234567812345678123456781234567812345678" // Не корректно, потому что Description - отсутствует.
+                    "123456781234567812345678123456781234567812345678" // Не корректно, потому что Description - больше ограничения.
             }
         };
     }

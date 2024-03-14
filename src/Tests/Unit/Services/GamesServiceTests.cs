@@ -107,14 +107,14 @@ public class GamesServiceTests : ServiceFixture
 
     [Theory]
     [MemberData(nameof(FakeGames.GetManyIncorrectModelsForAddTest), MemberType = typeof(FakeGames))]
-    public async Task AddAsync_WithInCorrectNewGameModel_ThrowCreateException(Game gameToCreate)
+    public async Task AddAsync_WithInCorrectNewGameModel_ThrowArgumentException(Game gameToCreate)
     {
         //Arrange
         var gamesService =
             CreateServiceForTest((adminDbContext, logger) => new GamesService(adminDbContext, logger));
 
         //Act & Assert
-        await Assert.ThrowsAsync<CreateException>(async () =>
+        await Assert.ThrowsAsync<ArgumentException>(async () =>
             await gamesService.AddAsync(gameToCreate, MockCancellationToken));
     }
 
@@ -140,7 +140,7 @@ public class GamesServiceTests : ServiceFixture
     #region Update
 
     [Fact]
-    public async Task UpdateAsync_WithCorrectUpdateGameModel_Success()
+    public async Task UpdateAsync_WithCorrectUpdateGameModel_ReturnUpdatedModel()
     {
         //Arrange
         var gamesService = CreateServiceForTest((adminDbContext, logger) => new GamesService(adminDbContext, logger));
@@ -154,11 +154,10 @@ public class GamesServiceTests : ServiceFixture
 
         //Act
         updateGame.Adapt(existsGame);
-        await gamesService.UpdateAsync(existsGame.Id, existsGame, MockCancellationToken);
-        var updatedGame = await gamesService.GetAsync(existsGame.Name, MockCancellationToken);
+        var updatedGame = await gamesService.UpdateAsync(existsGame.Id, existsGame, MockCancellationToken);
 
         //Assert
-        updatedGame!.Name.Should().Be(updateGame.Name);
+        updatedGame.Name.Should().Be(updateGame.Name);
         updatedGame.Description.Should().Be(updateGame.Description);
     }
 

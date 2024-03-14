@@ -4,6 +4,7 @@ using Domain.DTOs.Rights;
 using Domain.Models.Games;
 using Domain.Models.Rights;
 
+using Infrastructure.Comparers;
 using Infrastructure.Services.Interfaces;
 
 using Mapster;
@@ -30,17 +31,23 @@ public class RightsController : ControllerBase, IModelsValidator
     /// <inheritdoc cref="IGamesService"/>
     private readonly IGamesService _gamesService;
 
+    /// <inheritdoc cref="ExternalGamesComparer"/>
+    private readonly ExternalGamesComparer _externalGamesComparer;
+
     /// <inheritdoc cref="RightsController"/>
     /// <param name="logger">Логгер.</param>
-    /// <param name="rightsService">Сервис для работы с парвами.</param>
+    /// <param name="rightsService">Сервис для работы с правами.</param>
     /// <param name="gamesService">Сервис для работы с играми.</param>
-    public RightsController(ILogger logger, IRightsService rightsService, IGamesService gamesService)
+    /// <param name="externalGamesComparer">Компаратор для сравнения внешних игр.</param>
+    public RightsController(ILogger logger, IRightsService rightsService, IGamesService gamesService,
+        ExternalGamesComparer externalGamesComparer)
     {
         _logger = logger;
         _logger.Debug($"Инициализация: {nameof(RightsController)}.");
 
         _rightsService = rightsService;
         _gamesService = gamesService;
+        _externalGamesComparer = externalGamesComparer;
 
         _logger.Debug($"{nameof(RightsController)}: инициализирован.");
     }
@@ -50,7 +57,6 @@ public class RightsController : ControllerBase, IModelsValidator
     /// </summary>
     /// <param name="registerRightsDto">ДТО регистрации прав.</param>
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>>
-    /// <returns>Перечисление всех прав игры в формате JSON.</returns>
     /// <response code="200">Когда права были успешно зарегистрированы.</response>
     /// <response code="400">Когда были переданы не корректные данные для регистрации прав.</response>
     [HttpPost("register")]
@@ -65,18 +71,22 @@ public class RightsController : ControllerBase, IModelsValidator
         _logger.Debug($"Последнее право из списка прав на регистрацию: {registerRightsDto.Rights.LastOrDefault()}");
         _logger.Debug($"Игра, для которой необходимо зарегистрировать права: {registerRightsDto.Game.Name}");
 
+        var externalGame = registerRightsDto.Game.Adapt<Game>();
         var gameModel = await _gamesService.GetAsync(registerRightsDto.Game.Name, cancellationToken);
         if (gameModel is null)
         {
             _logger.Information(
                 "Не удалось найти игру для регистрации прав. Игра будет создана перед регистрацией прав.");
-            _logger.Debug("ДТО игры для создания: {gameDto}", registerRightsDto.Game);
+            _logger.Debug("ДТО игры для создания: {gameDto}.", registerRightsDto.Game);
 
-            var newGameModel = registerRightsDto.Game.Adapt<Game>();
-            gameModel = await _gamesService.AddAsync(newGameModel, cancellationToken);
+            gameModel = await _gamesService.AddAsync(externalGame, cancellationToken);
 
             _logger.Information("Игра для регистрации прав успешно создана.");
-            _logger.Debug("Модель созданной игры: {gameModel}", gameModel);
+            _logger.Debug("Модель созданной игры: {gameModel}.", gameModel);
+        }
+        else if (!_externalGamesComparer.Equals(gameModel, externalGame))
+        {
+            gameModel = await _gamesService.UpdateAsync(gameModel.Id, externalGame, cancellationToken);
         }
 
         var rightsModels = registerRightsDto.Rights.Adapt<IList<Right>>();

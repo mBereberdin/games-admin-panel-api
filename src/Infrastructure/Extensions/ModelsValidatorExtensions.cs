@@ -12,7 +12,7 @@ public static class ModelsValidatorExtensions
     /// <summary>
     /// Вылидна ли модель.
     /// </summary>
-    /// <param name="_">Сервис, который вызывает валдацию.</param>
+    /// <param name="_">Сервис, который вызывает валидацию.</param>
     /// <param name="model">Модель, которую необходимо проверить на валидность.</param>
     /// <param name="validationResults">Ошибки вылидации.</param>
     /// <typeparam name="TModel">Тип модели.</typeparam>
@@ -37,19 +37,19 @@ public static class ModelsValidatorExtensions
     /// <summary>
     /// Вылидна ли модель.
     /// </summary>
-    /// <param name="_">Сервис, который вызывает валдацию.</param>
-    /// <param name="model">Модель, которую необходимо проверить на валидность.</param>
+    /// <param name="_">Сервис, который вызывает валидацию.</param>
+    /// <param name="models">Список с моделями, которые необходимо проверить на валидность.</param>
     /// <param name="validationResults">Ошибки вылидации.</param>
     /// <typeparam name="TModel">Тип модели.</typeparam>
-    /// <exception cref="ArgumentNullException">Когда для валидации модели была передана пустая модель.</exception>
-    /// <returns>True - если модель валидна, иначе - false.</returns>
+    /// <exception cref="ArgumentNullException">Когда для валидации моделей был передан пустой список моделей.</exception>
+    /// <returns>True - если все модели списка валидны, иначе - false.</returns>
     public static bool AreValid<TModel>(this IModelsValidator _, IList<TModel> models,
         out IList<ValidationResult> validationResults)
     {
         if (models is null || !models.Any())
         {
             throw new ArgumentNullException(nameof(models),
-                "Для валидации моделей был передан пустой спписок моделей.");
+                "Для валидации моделей был передан пустой список моделей.");
         }
 
         validationResults = new List<ValidationResult>();

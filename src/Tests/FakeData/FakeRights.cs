@@ -34,7 +34,7 @@ public static class FakeRights
     private static Guid _firstExistsRightId = Guid.Empty;
 
     /// <summary>
-    /// Получить первый идентификатор существующего права..
+    /// Получить первый идентификатор существующего права.
     /// </summary>
     public static Guid GetFirstExistsRightId
     {

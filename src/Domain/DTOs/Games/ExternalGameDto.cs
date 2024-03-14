@@ -26,6 +26,6 @@ public record ExternalGameDto
     /// <summary>
     /// Описание.
     /// </summary>
-    [StringLength(32)]
+    [StringLength(32, MinimumLength = 1)]
     public string? Description { get; init; }
 }

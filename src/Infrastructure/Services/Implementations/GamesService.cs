@@ -22,9 +22,7 @@ public class GamesService : IGamesService, IModelsValidator
     /// </summary>
     private readonly ILogger _logger;
 
-    /// <summary>
-    /// Контекст базы данных панели администрирования.
-    /// </summary>
+    /// <inheritdoc cref="AdminDbContext"/>
     private readonly AdminDbContext _context;
 
     /// <inheritdoc cref="GamesService"/>
@@ -45,7 +43,7 @@ public class GamesService : IGamesService, IModelsValidator
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Получение игры через сервис.");
-        _logger.Debug("Наименование игры для получения: {name}", name);
+        _logger.Debug("Наименование игры для получения: {name}.", name);
 
         var foundGame = await _context.Games.Where(game => game.Name == name)
             .SingleOrDefaultAsync(cancellationToken: cancellationToken);
@@ -68,7 +66,7 @@ public class GamesService : IGamesService, IModelsValidator
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Получение игры через сервис.");
-        _logger.Debug("Идентификатор игры для получения: {id}", id);
+        _logger.Debug("Идентификатор игры для получения: {id}.", id);
 
         var foundGame = await _context.Games.FindAsync(new object?[] { id }, cancellationToken);
         if (foundGame is null)
@@ -90,7 +88,7 @@ public class GamesService : IGamesService, IModelsValidator
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Создание игры через сервис.");
-        _logger.Debug("Игра для создания: {gameToAdd}", gameToAdd);
+        _logger.Debug("Игра для создания: {gameToAdd}.", gameToAdd);
 
         if (!this.IsValid(gameToAdd, out var validationResults))
         {
@@ -98,7 +96,7 @@ public class GamesService : IGamesService, IModelsValidator
             _logger.Debug("Ошибки заполнения игры: {error}",
                 string.Join(',', validationResults.Select(result => result.ErrorMessage)));
 
-            throw new CreateException("Невозможно создать игру т.к. она заполнена некорректно.");
+            throw new ArgumentException("Невозможно создать игру т.к. она заполнена некорректно.");
         }
 
         await _context.Games.AddAsync(gameToAdd, cancellationToken);
@@ -109,7 +107,7 @@ public class GamesService : IGamesService, IModelsValidator
         }
         catch (DbUpdateException dbUpdateException)
         {
-            _logger.Error("При добавлении игры в бд произошла ошибка: {dbUpdateException}", dbUpdateException);
+            _logger.Error("При добавлении игры в бд произошла ошибка: {dbUpdateException}.", dbUpdateException);
 
             throw new CreateException("При добавлении игры в бд произошла ошибка.", dbUpdateException);
         }
@@ -121,12 +119,12 @@ public class GamesService : IGamesService, IModelsValidator
     }
 
     /// <inheritdoc />
-    public async Task UpdateAsync(Guid id, Game updatedGame, CancellationToken cancellationToken)
+    public async Task<Game> UpdateAsync(Guid id, Game updatedGame, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Обновление игры через сервис.");
-        _logger.Debug("Идентификатор игры для обновления: {id}", id);
-        _logger.Debug("Игра для обновления: {updatedGame}", updatedGame);
+        _logger.Debug("Идентификатор игры для обновления: {id}.", id);
+        _logger.Debug("Игра для обновления: {updatedGame}.", updatedGame);
 
         if (!this.IsValid(updatedGame, out var validationResults))
         {
@@ -154,12 +152,14 @@ public class GamesService : IGamesService, IModelsValidator
         }
         catch (DbUpdateException dbUpdateException)
         {
-            _logger.Error("При обновлении игры в бд произошла ошибка: {dbUpdateException}", dbUpdateException);
+            _logger.Error("При обновлении игры в бд произошла ошибка: {dbUpdateException}.", dbUpdateException);
 
             throw new UpdateException("При обновлении игры в бд произошла ошибка.", dbUpdateException);
         }
 
         _logger.Information("Обновление игры через сервис - успешно.");
         _logger.Debug("Обновленная игра: {existsGame}.", existsGame);
+
+        return existsGame;
     }
 }

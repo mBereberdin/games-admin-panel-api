@@ -5,7 +5,7 @@ using Domain.Models.Rights;
 using Infrastructure.Exceptions.CRUD;
 
 /// <summary>
-/// Сервис для работы с парвами.
+/// Сервис для работы с правами.
 /// </summary>
 public interface IRightsService
 {
