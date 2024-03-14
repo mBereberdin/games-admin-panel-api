@@ -166,8 +166,7 @@ public static class FakeUsers
     /// </summary>
     public static IEnumerable<object[]> GetManyIncorrectModelsForUpdateTest()
     {
-        // Пропускаем первого потому что у него некорректен только id, который ниже будет заменен.
-        var incorrectNewUserModels = GetManyIncorrectNewModels().Skip(1).ToList();
+        var incorrectNewUserModels = GetManyIncorrectNewModels().ToList();
         var existsUserId = GetFirstExistsUserId;
         foreach (var incorrectNewUserModel in incorrectNewUserModels)
         {

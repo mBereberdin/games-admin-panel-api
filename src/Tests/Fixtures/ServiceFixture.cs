@@ -16,9 +16,7 @@ using Serilog;
 /// <remarks>Получает контекст бд для сервиса, мокает логгер и токен отмены, подгружает конфиги маппинга.</remarks>
 public class ServiceFixture : DatabaseFixture, IDisposable
 {
-    /// <summary>
-    /// Контекст базы данных панели администрирования.
-    /// </summary>
+    /// <inheritdoc cref="AdminDbContext"/>
     private readonly AdminDbContext _context;
 
     /// <summary>

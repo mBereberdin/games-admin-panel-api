@@ -22,9 +22,7 @@ public class UsersService : IUsersService, IModelsValidator
     /// </summary>
     private readonly ILogger _logger;
 
-    /// <summary>
-    /// Контекст базы данных панели администрирования.
-    /// </summary>
+    /// <inheritdoc cref="AdminDbContext"/>
     private readonly AdminDbContext _context;
 
     /// <inheritdoc cref="IUsersService"/>

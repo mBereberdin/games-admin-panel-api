@@ -79,6 +79,13 @@ public class ExceptionsMiddleware
 
             await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
         }
+        catch (SortException exception)
+        {
+            _logger.LogError("При выполнении запроса произошла ошибка сортировки.");
+            _logger.LogDebug($"Ошибка сортировки: {exception}, трассировка: {exception.StackTrace}.");
+
+            await WriteResponseAsync(httpContext, StatusCodes.Status500InternalServerError, exception.Message);
+        }
         catch (HeadersException exception)
         {
             _logger.LogError("При выполнении запроса произошла ошибка заголовков.");
