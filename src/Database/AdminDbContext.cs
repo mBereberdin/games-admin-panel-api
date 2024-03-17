@@ -41,6 +41,11 @@ public class AdminDbContext : DbContext
     public virtual DbSet<Right> Rights { get; set; }
 
     /// <summary>
+    /// Права пользователя.
+    /// </summary>
+    public virtual DbSet<UsersRight> UsersRights { get; set; }
+
+    /// <summary>
     /// Действия при создании модели.
     /// </summary>
     /// <param name="modelBuilder">Строитель моделей.</param>

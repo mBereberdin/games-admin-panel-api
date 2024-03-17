@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Domain.Models.Common;
+using Domain.Models.Rights;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -29,4 +30,10 @@ public class User : EntityBase
     [StringLength(20)]
     [Comment("Имя пользователя.")]
     public required string Nickname { get; set; }
+
+    /// <summary>
+    /// Права пользователя.
+    /// </summary>
+    // ReSharper disable once UnassignedGetOnlyAutoProperty
+    public List<UsersRight>? UserRights { get; }
 }
