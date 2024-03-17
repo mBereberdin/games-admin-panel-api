@@ -22,4 +22,12 @@ public interface IPasswordsService
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
     /// <returns>Модель пароля или null.</returns>
     public Task<Password?> GetPasswordAsync(Guid id, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Получить пароль.
+    /// </summary>
+    /// <param name="encryptedValue">Зашифрованное значение пароля.</param>
+    /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
+    /// <returns>Модель пароля или null.</returns>
+    public Task<Password?> GetAsync(string encryptedValue, CancellationToken cancellationToken);
 }
