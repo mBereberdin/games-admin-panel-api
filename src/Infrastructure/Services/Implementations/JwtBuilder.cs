@@ -66,11 +66,18 @@ public class JwtBuilder : IJwtBuilder
     }
 
     /// <inheritdoc />
-    public IJwtBuilder AddClaims(IList<Right> rights)
+    public IJwtBuilder AddClaims(IList<Right>? rights)
     {
         _logger.Information("Добавление требований через строитель.");
-        _logger.Debug("Кол-во прав, которые необходимо добавить в требования: {rightsCount}.", rights.Count);
-        _logger.Debug("Последнее право, которое необходимо добавить в требования: {rightsLast}.", rights.Last());
+        _logger.Debug("Кол-во прав, которые необходимо добавить в требования: {rightsCount}.", rights?.Count);
+        _logger.Debug("Последнее право, которое необходимо добавить в требования: {rightsLast}.",
+            rights?.LastOrDefault());
+
+        if (rights is null || !rights.Any())
+        {
+            throw new ArgumentNullException(nameof(rights),
+                "Для добавления требований через строитель были переданы пустые права.");
+        }
 
         var rightsGroups = rights.GroupBy(right => right.Game!.Name);
         foreach (var group in rightsGroups)
@@ -90,6 +97,12 @@ public class JwtBuilder : IJwtBuilder
     {
         _logger.Information("Добавление имя пользователя через строитель.");
         _logger.Debug("Имя пользователя, которое необходимо добавить: {username}.", username);
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new ArgumentNullException(nameof(username),
+                "Для добавления имени пользователя через строитель было передано пустое имя пользователя.");
+        }
 
         _descriptor.Claims.Add("Username", username);
 

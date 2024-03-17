@@ -66,9 +66,9 @@ public static class DiExtensions
     {
         Log.Logger.Information("Добавление аутентификации.");
 
-        services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
-
         var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>()!;
+
+        services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtBearerOptions =>

@@ -15,7 +15,7 @@ using Serilog;
 [Route("[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class TokensController : ControllerBase, IModelsValidator
+public class TokensController : ControllerBase
 {
     /// <inheritdoc cref="IPasswordsService"/>
     private readonly IPasswordsService _passwordsService;

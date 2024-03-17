@@ -1,5 +1,6 @@
 namespace Infrastructure.Settings;
 
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using Microsoft.IdentityModel.Tokens;
@@ -12,21 +13,27 @@ public record JwtSettings
     /// <summary>
     /// Выдающий.
     /// </summary>
+    [Required]
+    [MinLength(3)]
     public string Issuer { get; init; } = null!;
 
     /// <summary>
     /// Аудитория.
     /// </summary>
+    [Required]
+    [MinLength(3)]
     public string Audience { get; init; } = null!;
 
     /// <summary>
     /// Через сколько минут истекает токен.
     /// </summary>
-    public int ExpiryInMinutes { get; init; }
+    public int ExpiryInMinutes { get; init; } = 1;
 
     /// <summary>
     /// Слово ключа безопасности.
     /// </summary>
+    [Required]
+    [MinLength(3)]
     public string SecurityKeyWord { get; init; } = null!;
 
     /// <summary>
