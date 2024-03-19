@@ -6,11 +6,15 @@ using Infrastructure.Comparers;
 using Infrastructure.Middlewares;
 using Infrastructure.Services.Implementations;
 using Infrastructure.Services.Interfaces;
+using Infrastructure.Settings;
 
 using Mapster;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 using Serilog;
 
@@ -44,11 +48,45 @@ public static class DiExtensions
         services.AddTransient<IPasswordsService, PasswordsService>();
         services.AddTransient<IGamesService, GamesService>();
         services.AddTransient<IRightsService, RightsService>();
+        services.AddTransient<IJwtBuilder, JwtBuilder>();
         services.AddTransient<RightsSortComparer>();
         services.AddTransient<ExternalGamesComparer>();
 
         TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 
         Log.Logger.Information("Сервисы добавлены.");
+    }
+
+    /// <summary>
+    /// Добавить аутентификацию.
+    /// </summary>
+    /// <param name="services">Сервисы приложения.</param>
+    /// <param name="configuration">Конфигурация приложения.</param>
+    public static void AddUsersAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        Log.Logger.Information("Добавление аутентификации.");
+
+        var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>()!;
+
+        services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.TokenValidationParameters =
+                        new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+
+                            ValidIssuer = jwtSettings.Issuer,
+                            ValidAudience = jwtSettings.Audience,
+                            IssuerSigningKey = jwtSettings.SecurityKey
+                        };
+                });
+
+        Log.Logger.Information("Аутентификация добавлена.");
     }
 }

@@ -24,17 +24,11 @@ public class ServiceFixture : DatabaseFixture, IDisposable
     /// </summary>
     private readonly AdminDbContext _mockedContextThrowException;
 
-    /// <summary>
-    /// Фиктивный логгер.
-    /// </summary>
-    private readonly ILogger _mockLogger;
-
     /// <inheritdoc cref="ServiceFixture"/>
     protected ServiceFixture()
     {
         _context = CreateDbContext();
         _mockedContextThrowException = MockedContextThrowExceptionOnSave();
-        _mockLogger = new Mock<ILogger>().Object;
         MockCancellationToken = new CancellationTokenSource(int.MaxValue).Token;
         TypeAdapterConfig.GlobalSettings.Scan(typeof(MapsterConfigsRegister).Assembly);
     }
@@ -43,6 +37,11 @@ public class ServiceFixture : DatabaseFixture, IDisposable
     /// Фиктивный токен отмены выполнения операции.
     /// </summary>
     protected CancellationToken MockCancellationToken { get; }
+
+    /// <summary>
+    /// Фиктивный логгер.
+    /// </summary>
+    public static ILogger MockLogger => new Mock<ILogger>().Object;
 
     /// <summary>
     /// Создать сервис для теста.
@@ -57,7 +56,7 @@ public class ServiceFixture : DatabaseFixture, IDisposable
     {
         var providedContext = needThrowDbUpdateException ? _mockedContextThrowException : _context;
 
-        return creation(providedContext, _mockLogger);
+        return creation(providedContext, MockLogger);
     }
 
     /// <summary>

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Tests.Fixtures;
@@ -31,6 +32,11 @@ public class WebApiApplicationFactory<TProgram> : WebApplicationFactory<TProgram
         });
 
         builder.UseEnvironment("Development");
+
+        builder.ConfigureAppConfiguration(configurationBuilder =>
+        {
+            configurationBuilder.AddJsonFile(AppSettingsFixture.GetTestAppsettingsPath);
+        });
     }
 
     /// <summary>

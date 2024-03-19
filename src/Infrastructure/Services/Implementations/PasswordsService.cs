@@ -92,4 +92,37 @@ public class PasswordsService : IPasswordsService, IModelsValidator
 
         return foundPassword;
     }
+
+    /// <inheritdoc />
+    public async Task<Password?> GetAsync(string encryptedValue, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        _logger.Information("Получение пароля через сервис.");
+        _logger.Debug("Зашифрованное значение пароля для получения: {encryptedValue}.", encryptedValue);
+
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        var foundPassword = await _context.Passwords
+                                          .Include(password => password.User)
+                                          .ThenInclude(user => user.UserRights)
+                                          .ThenInclude(userRight => userRight.Right)
+                                          .ThenInclude(right => right.Game)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+                                          .Where(password => password.EncryptedValue.Equals(encryptedValue))
+                                          .SingleOrDefaultAsync(cancellationToken);
+        if (foundPassword is null)
+        {
+            _logger.Error("Не удалось получить пароль через сервис.");
+            _logger.Debug("Зашифрованное значение пароля, для которого не удалось получить пароль: {encryptedValue}.",
+                encryptedValue);
+
+            return null;
+        }
+
+        _logger.Information("Получение пароля через сервис - успешно.");
+        _logger.Debug("Полученный пароль: {foundPassword}.", foundPassword);
+
+        return foundPassword;
+    }
 }

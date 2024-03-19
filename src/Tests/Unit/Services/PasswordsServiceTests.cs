@@ -102,5 +102,36 @@ public class PasswordsServiceTests : ServiceFixture
         password.Should().BeNull();
     }
 
+    [Fact]
+    public async Task GetAsync_WithExistsEncryptedValue_ReturnPassword()
+    {
+        //Arrange
+        var passwordsService =
+            CreateServiceForTest((adminDbContext, logger) => new PasswordsService(adminDbContext, logger));
+        var existsPasswordEncryptedValue = FakePasswords.GetManyCorrectExistsModels().First().EncryptedValue;
+
+        //Act
+        var password = await passwordsService.GetAsync(existsPasswordEncryptedValue, MockCancellationToken);
+
+        //Assert
+        password.Should().NotBeNull();
+        password!.EncryptedValue.Should().BeEquivalentTo(existsPasswordEncryptedValue);
+    }
+
+    [Fact]
+    public async Task GetAsync_WithNotExistsEncryptedValue_ReturnNull()
+    {
+        //Arrange
+        var passwordsService =
+            CreateServiceForTest((adminDbContext, logger) => new PasswordsService(adminDbContext, logger));
+        const string notExistsPasswordEncryptedValue = "notExistsPasswordEncryptedValue";
+
+        //Act
+        var password = await passwordsService.GetAsync(notExistsPasswordEncryptedValue, MockCancellationToken);
+
+        //Assert
+        password.Should().BeNull();
+    }
+
     #endregion
 }

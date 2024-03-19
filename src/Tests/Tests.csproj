@@ -32,4 +32,11 @@
         <ProjectReference Include="..\WebApi\WebApi.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="appsettings.Tests.json" />
+      <Content Include="appsettings.Tests.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

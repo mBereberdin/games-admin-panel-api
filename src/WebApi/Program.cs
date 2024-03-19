@@ -24,6 +24,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddServices();
+builder.Services.AddUsersAuthentication(builder.Configuration);
 
 Log.Logger.Information("Конфигурация была проинициализирована.");
 
@@ -41,6 +42,7 @@ app.AddAppMiddlewares();
 app.AddMigrateDatabase();
 
 app.MapControllers();
+app.UseAuthentication();
 
 Log.Logger.Information("Приложение было проинициализировано.");
 
