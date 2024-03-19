@@ -25,6 +25,23 @@ Backend приложение для администрирования игр.
 dotnet ef migrations add <MigrationName> -s ../WebApi
 ```
 
+### Собрать приложение в docker образ
+
+1. Перейти в директорию: `games-admin-panel-api/`;
+2. Выполнить команду:
+
+```powershell
+docker build -t games-admin-panel:latest .
+```
+
+#### Собрать контейнер образа
+
+2. Выполнить команду:
+
+```powershell
+docker create --name LOCAL-games-admin-panel games-admin-panel:latest
+```
+
 ## Дополнительные пояснения
 
 ### Data annotations vs fluent api

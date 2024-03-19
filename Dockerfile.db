@@ -1,0 +1,9 @@
+#
+# Распаковывание postgres и копирование дампа для инициализации данных
+#
+FROM postgres:16.1-alpine3.19
+WORKDIR /docker-entrypoint-initdb.d/
+COPY ./*-dump.sql .
+
+ENV POSTGRES_USER=admin
+ENV POSTGRES_PASSWORD=123
