@@ -1,0 +1,23 @@
+#
+# Стадия сборки проектов решения
+#
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS build
+WORKDIR /app
+
+# Копирование всего
+COPY src/ .
+
+# Восстановление зависимостей
+RUN dotnet restore
+
+# Сборка и публикация релиза
+RUN dotnet publish -c Release -o out
+
+#
+# Стадия сборки образа
+#
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine
+WORKDIR /app
+COPY --from=build /app/out .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "WebApi.dll"]

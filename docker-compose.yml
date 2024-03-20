@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  games-admin-panel-backend:
+    build:
+      dockerfile: ./Dockerfile.backend
+    container_name: LOCAL-games-admin-panel-backend
+    environment:
+      - ConnectionStrings__AdminDbContext=Host=games-admin-panel-db;Port=5432;Database=AdminPanel;Username=admin;Password=123;
+      - Urls=http://0.0.0.0:80
+    ports:
+      - "5004:80"
+    depends_on:
+      - "games-admin-panel-db"
+
+  games-admin-panel-db:
+    build:
+      dockerfile: ./Dockerfile.db
+    container_name: LOCAL-games-admin-panel-db
+    ports:
+      - "5433:5432"
+    restart: always
+    volumes:
+      - /var/lib/postgresql/data
