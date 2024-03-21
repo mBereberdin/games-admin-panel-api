@@ -9,16 +9,24 @@ services:
       - ConnectionStrings__AdminDbContext=Host=games-admin-panel-db;Port=5432;Database=AdminPanel;Username=admin;Password=123;
       - Urls=http://0.0.0.0:80
     ports:
-      - "5004:80"
+      - 5004:80
     depends_on:
-      - "games-admin-panel-db"
+      games-admin-panel-db:
+        condition: service_healthy
+        restart: true
 
   games-admin-panel-db:
     build:
       dockerfile: ./Dockerfile.db
     container_name: LOCAL-games-admin-panel-db
     ports:
-      - "5433:5432"
+      - 5433:5432
     restart: always
     volumes:
       - /var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d AdminPanel" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
