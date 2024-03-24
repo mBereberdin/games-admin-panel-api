@@ -89,4 +89,18 @@ public static class DiExtensions
 
         Log.Logger.Information("Аутентификация добавлена.");
     }
+
+    /// <summary>
+    /// Добавить кэширование.
+    /// </summary>
+    /// <param name="services">Сервисы приложения.</param>
+    /// <param name="configuration">Конфигурация приложения.</param>
+    public static void AddCaching(this IServiceCollection services, IConfiguration configuration)
+    {
+        Log.Logger.Information("Добавление кэширования.");
+
+        services.Configure<CacheSettings>(configuration.GetSection(nameof(CacheSettings)));
+
+        Log.Logger.Information("Кэширование добавлено.");
+    }
 }

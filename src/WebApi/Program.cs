@@ -25,6 +25,7 @@ builder.Services.AddControllers();
 builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddUsersAuthentication(builder.Configuration);
+builder.Services.AddCaching(builder.Configuration);
 
 Log.Logger.Information("Конфигурация была проинициализирована.");
 
