@@ -100,6 +100,8 @@ public static class DiExtensions
         Log.Logger.Information("Добавление кэширования.");
 
         services.Configure<CacheSettings>(configuration.GetSection(nameof(CacheSettings)));
+        services.AddSingleton<IRedisProvider, RedisProvider>();
+        services.AddTransient<ICacheService, CacheService>();
 
         Log.Logger.Information("Кэширование добавлено.");
     }
