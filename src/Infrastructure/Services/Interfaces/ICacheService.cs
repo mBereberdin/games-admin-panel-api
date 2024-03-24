@@ -32,10 +32,10 @@ public interface ICacheService
     public Task DeleteAsync(object key, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Обернуть результаты кэширования.
+    /// Обернуть операции кэширования.
     /// </summary>
     /// <param name="key">Ключ, по которому необходимо получить и сохранить кэш.</param>
-    /// <param name="asyncDelegate">Ассинхронный метод получения значения если его не будет в кэше.</param>
+    /// <param name="asyncDelegate">Асинхронный метод получения значения если его не будет в кэше.</param>
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
     /// <typeparam name="TType">Тип сохраненного значения.</typeparam>
     /// <returns>Задачу, результатом которой является экземпляр полученного значения или null.</returns>

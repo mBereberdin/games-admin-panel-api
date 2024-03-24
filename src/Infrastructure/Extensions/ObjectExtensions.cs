@@ -21,7 +21,7 @@ public static class ObjectExtensions
     /// <summary>
     /// Преобразовать объект к json строке.
     /// </summary>
-    /// <param name="object">Объект, которой необходимо преобразовать.</param>
+    /// <param name="object">Объект, который необходимо преобразовать.</param>
     /// <returns>Json строка.</returns>
     /// <exception cref="ArgumentNullException">Когда был передан null.</exception>
     /// <exception cref="SerializationException">Когда не удалось сериализовать объект.</exception>

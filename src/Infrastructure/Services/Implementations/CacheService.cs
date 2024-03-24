@@ -35,7 +35,7 @@ public class CacheService : ICacheService
     public CacheService(IRedisProvider redisProvider, IOptions<CacheSettings> cacheSettings, ILogger logger)
     {
         _logger = logger;
-        _logger.Debug($"Инициализация: {nameof(CacheService)}");
+        _logger.Debug($"Инициализация: {nameof(CacheService)}.");
 
         _cacheLifetime = TimeSpan.Parse(cacheSettings.Value.CacheLifetimeString);
         _cache = redisProvider.GetDatabase();
@@ -48,11 +48,11 @@ public class CacheService : ICacheService
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Получение значения из кэша через сервис.");
-        _logger.Debug("Ключ, по которому необходимо получить значение из кэша: {key}", key);
+        _logger.Debug("Ключ, по которому необходимо получить значение из кэша: {key}.", key);
 
         var keyString = key.ToString();
-        var objectJsonString = await _cache.StringGetAsync(keyString);
-        if (!objectJsonString.HasValue)
+        var redisValue = await _cache.StringGetAsync(keyString);
+        if (!redisValue.HasValue)
         {
             _logger.Information("Получение значения из кэша через сервис - завершено.");
             _logger.Debug("Значение не было найдено в кэше.");
@@ -60,8 +60,8 @@ public class CacheService : ICacheService
             return default;
         }
 
-        var objectInstance = objectJsonString.ToString()
-                                             .CreateInstance<TType>();
+        var objectInstance = redisValue.ToString()
+                                       .CreateInstance<TType>();
 
         _logger.Information("Получение значения из кэша через сервис - завершено.");
         _logger.Debug("Полученное из кэша значение: {objectInstance}.", objectInstance);
@@ -73,30 +73,30 @@ public class CacheService : ICacheService
     public async Task SetAsync(object key, object value, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        _logger.Information("Установить значение в кэш через сервис.");
-        _logger.Debug("Ключ, по которому необходимо установить значение в кэш: {key}", key);
-        _logger.Debug("Значение, которое необходимо установить в кэш: {value}", value);
+        _logger.Information("Установка значения в кэш через сервис.");
+        _logger.Debug("Ключ, по которому необходимо установить значение в кэш: {key}.", key);
+        _logger.Debug("Значение, которое необходимо установить в кэш: {value}.", value);
 
         var keyString = key.ToString();
         var valueJsonString = value.ToJsonString();
 
         await _cache.StringSetAsync(keyString, valueJsonString, _cacheLifetime);
 
-        _logger.Information("Установить значение в кэш через сервис - успешно.");
+        _logger.Information("Установка значения в кэш через сервис - успешно.");
     }
 
     /// <inheritdoc />
     public async Task DeleteAsync(object key, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        _logger.Information("Удалить значение из кэша через сервис.");
-        _logger.Debug("Ключ, по которому необходимо удалить значение: {key}", key);
+        _logger.Information("Удаление значения из кэша через сервис.");
+        _logger.Debug("Ключ, по которому необходимо удалить значение: {key}.", key);
 
         var keyString = key.ToString();
         var redisKey = new RedisKey(keyString);
         await _cache.KeyDeleteAsync(redisKey);
 
-        _logger.Information("Удалить значение из кэша через сервис - успешно.");
+        _logger.Information("Удаление значения из кэша через сервис - успешно.");
     }
 
     /// <inheritdoc />
@@ -105,7 +105,7 @@ public class CacheService : ICacheService
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Обертывание операций кэша через сервис.");
-        _logger.Debug("Ключ, по которому необходимо получить и сохранить значение: {key}", key);
+        _logger.Debug("Ключ, по которому необходимо получить и сохранить значение: {key}.", key);
 
         var gotCache = await GetAsync<TType>(key, cancellationToken);
         if (gotCache is not null)
@@ -128,7 +128,7 @@ public class CacheService : ICacheService
         await SetAsync(key, resultForCache, cancellationToken);
 
         _logger.Information("Обертывание операций кэша через сервис - завершено.");
-        _logger.Information("Полученное и сохраненное в кэш значение поставщика: {resultForCache}", resultForCache);
+        _logger.Information("Полученное и сохраненное в кэш значение поставщика: {resultForCache}.", resultForCache);
 
         return resultForCache;
     }
