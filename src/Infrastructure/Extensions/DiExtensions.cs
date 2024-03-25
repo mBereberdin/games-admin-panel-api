@@ -16,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
+using Minio;
+
 using Serilog;
 
 /// <summary>
@@ -104,5 +106,38 @@ public static class DiExtensions
         services.AddTransient<ICacheService, CacheService>();
 
         Log.Logger.Information("Кэширование добавлено.");
+    }
+
+    /// <summary>
+    /// Добавить minio.
+    /// </summary>
+    /// <param name="services">Сервисы приложения.</param>
+    /// <param name="configuration">Конфигурация приложения.</param>
+    public static void AddMinioDb(this IServiceCollection services, IConfiguration configuration)
+    {
+        Log.Logger.Information("Добавление minio.");
+
+        var minioSettings = configuration.GetSection(nameof(MinioSettings)).Get<MinioSettings>()!;
+
+        services.Configure<MinioSettings>(configuration.GetSection(nameof(MinioSettings)));
+        services.AddTransient<AvatarsService>();
+        services.AddTransient<MinioProvider>();
+        services.AddMinio(configureClient => configureClient
+                                             .WithEndpoint(minioSettings.Endpoint)
+                                             .WithSSL(false)
+                                             .WithCredentials(minioSettings.AccessKey, minioSettings.SecretKey));
+        Log.Logger.Information("Minio добавлено.");
+    }
+
+    public static void InitializeMinioDb(this IApplicationBuilder builder)
+    {
+        Log.Logger.Information("Инициализация базы данных minio.");
+
+        using var scope = builder.ApplicationServices.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MinioProvider>();
+
+        context.Initialize();
+
+        Log.Logger.Information("Инициализация базы данных minio - завершено.");
     }
 }

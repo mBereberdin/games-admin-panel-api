@@ -31,4 +31,9 @@ public record UpdateUserDto
     /// </summary>
     [StringLength(32)]
     public string? Email { get; init; }
+
+    /// <summary>
+    /// Аватар.
+    /// </summary>
+    public string? Avatar { get; init; }
 }

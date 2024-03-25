@@ -4,6 +4,7 @@ using Domain.DTOs.Users;
 using Domain.Models.Users;
 
 using Infrastructure.Exceptions;
+using Infrastructure.Services.Implementations;
 using Infrastructure.Services.Interfaces;
 
 using Mapster;
@@ -30,17 +31,21 @@ public class UsersController : ControllerBase
     /// <inheritdoc cref="ICacheService"/>
     private readonly ICacheService _cacheService;
 
+    private readonly AvatarsService _avatarsService;
+
     /// <inheritdoc />
     /// <param name="logger">Логгер.</param>
     /// <param name="usersService">Сервис для работы с пользователями.</param>
     /// <param name="cacheService">Сервис для работы с кэшем.</param>
-    public UsersController(ILogger logger, IUsersService usersService, ICacheService cacheService)
+    public UsersController(ILogger logger, IUsersService usersService, ICacheService cacheService,
+        AvatarsService avatarsService)
     {
         _logger = logger;
         _logger.Debug($"Инициализация: {nameof(UsersController)}.");
 
         _usersService = usersService;
         _cacheService = cacheService;
+        _avatarsService = avatarsService;
 
         _logger.Debug($"{nameof(UsersController)}: инициализирован.");
     }
@@ -180,12 +185,23 @@ public class UsersController : ControllerBase
         }
 
         updateUserDto.Adapt(foundUser);
+        if (!string.IsNullOrWhiteSpace(updateUserDto.Avatar))
+        {
+            var avatarId = await _avatarsService.SaveAsync(updateUserDto.Avatar, cancellationToken);
+            foundUser.AvatarId = avatarId;
+        }
+
         await _usersService.UpdateUserAsync(id, foundUser, cancellationToken);
 
         var savedUpdatedUser = await _usersService.GetUserAsync(id, cancellationToken);
         await _cacheService.SetAsync(foundUser.Id, foundUser, cancellationToken);
 
         var savedUpdatedUserDto = savedUpdatedUser.Adapt<UserDto>();
+        if (savedUpdatedUser!.AvatarId.HasValue)
+        {
+            savedUpdatedUserDto.Avatar =
+                await _avatarsService.GetAsync(savedUpdatedUser.AvatarId.Value, cancellationToken);
+        }
 
         _logger.Information("Запрос на обновление пользователя - успешно обработан.");
         _logger.Debug("Модель обновленного пользователя: {user}.", foundUser);

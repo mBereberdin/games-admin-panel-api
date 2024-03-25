@@ -26,6 +26,7 @@ builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddUsersAuthentication(builder.Configuration);
 builder.Services.AddCaching(builder.Configuration);
+builder.Services.AddMinioDb(builder.Configuration);
 
 Log.Logger.Information("Конфигурация была проинициализирована.");
 
@@ -41,6 +42,7 @@ if (isUseSwagger)
 
 app.AddAppMiddlewares();
 app.AddMigrateDatabase();
+app.InitializeMinioDb();
 
 app.MapControllers();
 app.UseAuthentication();

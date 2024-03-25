@@ -33,7 +33,7 @@ public class MapsterConfigsRegister : IRegister
     private void AddPasswordsConfigs(TypeAdapterConfig config)
     {
         config.NewConfig<string, Password>()
-            .MapWith(source => new Password { Id = Guid.Empty, EncryptedValue = source, UserId = Guid.Empty });
+              .MapWith(source => new Password { Id = Guid.Empty, EncryptedValue = source, UserId = Guid.Empty });
 
         config.NewConfig<Password, Password>().IgnoreIf((source, destination) => source.Id.Equals(Guid.Empty),
             destination => destination.Id);
@@ -47,6 +47,8 @@ public class MapsterConfigsRegister : IRegister
     {
         config.NewConfig<User, User>().IgnoreIf((source, destination) => source.Id.Equals(Guid.Empty),
             destination => destination.Id);
+
+        config.ForType<User, UserDto>().MapToConstructor(true);
 
         config.NewConfig<CreateUserDto, User>().MapWith(source => new User
         {
