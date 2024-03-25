@@ -44,11 +44,18 @@ public class CacheService : ICacheService
     }
 
     /// <inheritdoc />
-    public async Task<TType?> GetAsync<TType>(object key, CancellationToken cancellationToken)
+    public async Task<TType?> GetAsync<TType>(object? key, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Получение значения из кэша через сервис.");
         _logger.Debug("Ключ, по которому необходимо получить значение из кэша: {key}.", key);
+
+        if (key is null || (key is string stringKey && string.IsNullOrWhiteSpace(stringKey)))
+        {
+            _logger.Error("Невозможно получить значение кэша - без ключа кэша.");
+
+            throw new ArgumentNullException(nameof(key), "Невозможно получить значение кэша - без ключа кэша.");
+        }
 
         var keyString = key.ToString();
         var redisValue = await _cache.StringGetAsync(keyString);
@@ -70,12 +77,26 @@ public class CacheService : ICacheService
     }
 
     /// <inheritdoc />
-    public async Task SetAsync(object key, object value, CancellationToken cancellationToken)
+    public async Task SetAsync(object? key, object? value, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Установка значения в кэш через сервис.");
         _logger.Debug("Ключ, по которому необходимо установить значение в кэш: {key}.", key);
         _logger.Debug("Значение, которое необходимо установить в кэш: {value}.", value);
+
+        if (key is null || (key is string stringKey && string.IsNullOrWhiteSpace(stringKey)))
+        {
+            _logger.Error("Невозможно установить значение кэша - без ключа кэша.");
+
+            throw new ArgumentNullException(nameof(key), "Невозможно установить значение кэша - без ключа кэша.");
+        }
+
+        if (value is null || (value is string stringValue && string.IsNullOrWhiteSpace(stringValue)))
+        {
+            _logger.Error("Невозможно установить значение кэша - без значения кэша.");
+
+            throw new ArgumentNullException(nameof(value), "Невозможно установить значение кэша - без значения кэша.");
+        }
 
         var keyString = key.ToString();
         var valueJsonString = value.ToJsonString();
@@ -86,11 +107,18 @@ public class CacheService : ICacheService
     }
 
     /// <inheritdoc />
-    public async Task DeleteAsync(object key, CancellationToken cancellationToken)
+    public async Task DeleteAsync(object? key, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Удаление значения из кэша через сервис.");
         _logger.Debug("Ключ, по которому необходимо удалить значение: {key}.", key);
+
+        if (key is null || (key is string stringKey && string.IsNullOrWhiteSpace(stringKey)))
+        {
+            _logger.Error("Невозможно удалить кэш - без ключа кэша.");
+
+            throw new ArgumentNullException(nameof(key), "Невозможно удалить кэш для ключа - без ключа.");
+        }
 
         var keyString = key.ToString();
         var redisKey = new RedisKey(keyString);
@@ -100,12 +128,19 @@ public class CacheService : ICacheService
     }
 
     /// <inheritdoc />
-    public async Task<TType?> WrapCacheOperationsAsync<TType>(object key, Func<Task<TType?>> asyncDelegate,
+    public async Task<TType?> WrapCacheOperationsAsync<TType>(object? key, Func<Task<TType?>> asyncDelegate,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Обертывание операций кэша через сервис.");
         _logger.Debug("Ключ, по которому необходимо получить и сохранить значение: {key}.", key);
+
+        if (key is null || (key is string stringKey && string.IsNullOrWhiteSpace(stringKey)))
+        {
+            _logger.Error("Для операций с кэшем был передан пустой ключ кэша.");
+
+            throw new ArgumentNullException(nameof(key), "Для операций с кэшем был передан пустой ключ кэша.");
+        }
 
         var gotCache = await GetAsync<TType>(key, cancellationToken);
         if (gotCache is not null)

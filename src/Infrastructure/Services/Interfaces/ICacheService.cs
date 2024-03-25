@@ -12,7 +12,8 @@ public interface ICacheService
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
     /// <typeparam name="TType">Тип сохраненного значения.</typeparam>
     /// <returns>Задачу, результатом которой является экземпляр полученного значения или null.</returns>
-    public Task<TType?> GetAsync<TType>(object key, CancellationToken cancellationToken);
+    /// <exception cref="ArgumentNullException">Когда был передан пустой ключ.</exception>
+    public Task<TType?> GetAsync<TType>(object? key, CancellationToken cancellationToken);
 
     /// <summary>
     /// Установить значение в кэш.
@@ -21,7 +22,8 @@ public interface ICacheService
     /// <param name="value">Значение.</param>
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
     /// <returns>Задачу.</returns>
-    public Task SetAsync(object key, object value, CancellationToken cancellationToken);
+    /// <exception cref="ArgumentNullException">Когда был передан пустой ключ или значение.</exception>
+    public Task SetAsync(object? key, object? value, CancellationToken cancellationToken);
 
     /// <summary>
     /// Удалить значение из кэша.
@@ -29,7 +31,8 @@ public interface ICacheService
     /// <param name="key">Ключ, по которому необходимо удалить значение из кэша.</param>
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
     /// <returns>Задачу.</returns>
-    public Task DeleteAsync(object key, CancellationToken cancellationToken);
+    /// <exception cref="ArgumentNullException">Когда был передан пустой ключ.</exception>
+    public Task DeleteAsync(object? key, CancellationToken cancellationToken);
 
     /// <summary>
     /// Обернуть операции кэширования.
@@ -39,6 +42,7 @@ public interface ICacheService
     /// <param name="cancellationToken">Токен отмены выполнения операции.</param>
     /// <typeparam name="TType">Тип сохраненного значения.</typeparam>
     /// <returns>Задачу, результатом которой является экземпляр полученного значения или null.</returns>
-    public Task<TType?> WrapCacheOperationsAsync<TType>(object key, Func<Task<TType?>> asyncDelegate,
+    /// <exception cref="ArgumentNullException">Когда был передан пустой ключ.</exception>
+    public Task<TType?> WrapCacheOperationsAsync<TType>(object? key, Func<Task<TType?>> asyncDelegate,
         CancellationToken cancellationToken);
 }

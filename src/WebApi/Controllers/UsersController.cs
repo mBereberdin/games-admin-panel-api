@@ -181,9 +181,10 @@ public class UsersController : ControllerBase
 
         updateUserDto.Adapt(foundUser);
         await _usersService.UpdateUserAsync(id, foundUser, cancellationToken);
-        await _cacheService.SetAsync(foundUser.Id, foundUser, cancellationToken);
 
         var savedUpdatedUser = await _usersService.GetUserAsync(id, cancellationToken);
+        await _cacheService.SetAsync(foundUser.Id, foundUser, cancellationToken);
+
         var savedUpdatedUserDto = savedUpdatedUser.Adapt<UserDto>();
 
         _logger.Information("Запрос на обновление пользователя - успешно обработан.");
