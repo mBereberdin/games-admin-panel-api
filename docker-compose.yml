@@ -49,3 +49,9 @@ services:
       timeout: 5s
       retries: 5
 
+  redis-tests:
+    image: redis:alpine
+    container_name: LOCAL-games-admin-panel-redis-tests
+    ports:
+      - 6380:6379
+
