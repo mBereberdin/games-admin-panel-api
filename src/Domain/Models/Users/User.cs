@@ -32,6 +32,12 @@ public class User : EntityBase
     public required string Nickname { get; set; }
 
     /// <summary>
+    /// Идентификатор аватара.
+    /// </summary>
+    [Comment("Идентификатор аватара.")]
+    public Guid? AvatarId { get; set; }
+
+    /// <summary>
     /// Права пользователя.
     /// </summary>
     // ReSharper disable once UnassignedGetOnlyAutoProperty
