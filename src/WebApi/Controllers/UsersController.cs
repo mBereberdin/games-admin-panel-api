@@ -27,15 +27,20 @@ public class UsersController : ControllerBase
     /// <inheritdoc cref="IUsersService"/>
     private readonly IUsersService _usersService;
 
+    /// <inheritdoc cref="ICacheService"/>
+    private readonly ICacheService _cacheService;
+
     /// <inheritdoc />
     /// <param name="logger">Логгер.</param>
     /// <param name="usersService">Сервис для работы с пользователями.</param>
-    public UsersController(ILogger logger, IUsersService usersService)
+    /// <param name="cacheService">Сервис для работы с кэшем.</param>
+    public UsersController(ILogger logger, IUsersService usersService, ICacheService cacheService)
     {
         _logger = logger;
         _logger.Debug($"Инициализация: {nameof(UsersController)}.");
 
         _usersService = usersService;
+        _cacheService = cacheService;
 
         _logger.Debug($"{nameof(UsersController)}: инициализирован.");
     }
@@ -81,7 +86,8 @@ public class UsersController : ControllerBase
         _logger.Information("Получен запрос на получение пользователя.");
         _logger.Debug("Идентификатор пользователя: {id}", id);
 
-        var foundUser = await _usersService.GetUserAsync(id, cancellationToken);
+        var foundUser = await _cacheService.WrapCacheOperationsAsync(id,
+            async () => await _usersService.GetUserAsync(id, cancellationToken), cancellationToken);
         if (foundUser is null)
         {
             _logger.Information(
@@ -117,6 +123,7 @@ public class UsersController : ControllerBase
 
         var userModel = createUserDto.Adapt<User>();
         var user = await _usersService.CreateUserAsync(userModel, cancellationToken);
+        await _cacheService.SetAsync(user.Id, user, cancellationToken);
 
         _logger.Information("Запрос на добавление пользователя - успешно обработан.");
         _logger.Debug("Модель добавленного пользователя: {user}.", user);
@@ -163,6 +170,7 @@ public class UsersController : ControllerBase
                            "Не удалось преобразовать ДТО обновления пользователя в ДТО создания пользователя.");
 
             var createdUser = await _usersService.CreateUserAsync(user, cancellationToken);
+            await _cacheService.SetAsync(createdUser.Id, user, cancellationToken);
             var createdUserDto = createdUser.Adapt<UserDto>();
 
             _logger.Information("Запрос на обновление пользователя - успешно обработан.");
@@ -175,6 +183,8 @@ public class UsersController : ControllerBase
         await _usersService.UpdateUserAsync(id, foundUser, cancellationToken);
 
         var savedUpdatedUser = await _usersService.GetUserAsync(id, cancellationToken);
+        await _cacheService.SetAsync(foundUser.Id, foundUser, cancellationToken);
+
         var savedUpdatedUserDto = savedUpdatedUser.Adapt<UserDto>();
 
         _logger.Information("Запрос на обновление пользователя - успешно обработан.");
@@ -216,6 +226,8 @@ public class UsersController : ControllerBase
 
             return NotFound();
         }
+
+        await _cacheService.DeleteAsync(id, cancellationToken);
 
         _logger.Information("Запрос на удаление пользователя - успешно обработан.");
 

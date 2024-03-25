@@ -14,6 +14,8 @@ services:
       games-admin-panel-db:
         condition: service_healthy
         restart: true
+      redis:
+        condition: service_healthy
 
   games-admin-panel-db:
     build:
@@ -30,3 +32,26 @@ services:
       timeout: 10s
       retries: 5
       start_period: 5s
+
+  redis:
+    image: redis:alpine
+    container_name: LOCAL-games-admin-panel-redis
+    environment:
+      - REDISCLI_AUTH=redisSecretPassword
+      - REDIS_PASSWORD=redisSecretPassword
+    command: sh -c "redis-server --requirepass $${REDIS_PASSWORD}"
+    ports:
+      - 6379:6379
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep '^PONG$'" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis-tests:
+    image: redis:alpine
+    container_name: LOCAL-games-admin-panel-redis-tests
+    ports:
+      - 6380:6379
+

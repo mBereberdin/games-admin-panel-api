@@ -26,15 +26,20 @@ public class PasswordsController : ControllerBase
     /// <inheritdoc cref="IPasswordsService"/>
     private readonly IPasswordsService _passwordsService;
 
+    /// <inheritdoc cref="ICacheService"/>
+    private readonly ICacheService _cacheService;
+
     /// <inheritdoc />
     /// <param name="logger">Логгер.</param>
     /// <param name="passwordsService">Сервис для работы с паролями.</param>
-    public PasswordsController(ILogger logger, IPasswordsService passwordsService)
+    /// <param name="cacheService">Сервис для работы с кэшем.</param>
+    public PasswordsController(ILogger logger, IPasswordsService passwordsService, ICacheService cacheService)
     {
         _logger = logger;
         _logger.Debug($"Инициализация: {nameof(PasswordsController)}.");
 
         _passwordsService = passwordsService;
+        _cacheService = cacheService;
 
         _logger.Debug($"{nameof(PasswordsController)}: инициализирован.");
     }
@@ -57,7 +62,8 @@ public class PasswordsController : ControllerBase
         _logger.Information("Получен запрос на получение пароля.");
         _logger.Debug("Идентификатор пароля: {id}", id);
 
-        var foundPassword = await _passwordsService.GetPasswordAsync(id, cancellationToken);
+        var foundPassword = await _cacheService.WrapCacheOperationsAsync(id,
+            async () => await _passwordsService.GetPasswordAsync(id, cancellationToken), cancellationToken);
         if (foundPassword is null)
         {
             _logger.Information(
@@ -93,6 +99,7 @@ public class PasswordsController : ControllerBase
 
         var passwordModel = createPasswordDto.Adapt<Password>();
         var createdPassword = await _passwordsService.CreatePasswordAsync(passwordModel, cancellationToken);
+        await _cacheService.SetAsync(createdPassword.Id, createdPassword, cancellationToken);
         var createdPasswordDto = createdPassword.Adapt<PasswordDto>();
 
         _logger.Information("Запрос на добавление пароля - успешно обработан.");
