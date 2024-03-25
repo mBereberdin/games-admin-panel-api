@@ -13,8 +13,9 @@ services:
     depends_on:
       games-admin-panel-db:
         condition: service_healthy
-        restart: true
       redis:
+        condition: service_healthy
+      minio:
         condition: service_healthy
 
   games-admin-panel-db:
@@ -55,3 +56,19 @@ services:
     ports:
       - 6380:6379
 
+  minio:
+    image: minio/minio:RELEASE.2024-03-21T23-13-43Z
+    container_name: LOCAL-games-admin-panel-minio
+    environment:
+      - MINIO_ROOT_USER=myminioadmin
+      - MINIO_ROOT_PASSWORD=secretKey
+      - MINIO_VOLUMES=/minio/data
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server --console-address :9001
+    healthcheck:
+      test: [ "CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
